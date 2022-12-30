@@ -9,3 +9,8 @@ export const getResponseFormat = (
   data,
   error,
 });
+
+export const selectRandomUser = () => {
+  const randomNumber = Math.floor(Math.random() * userAgents.length);
+  return userAgents[randomNumber];
+};
