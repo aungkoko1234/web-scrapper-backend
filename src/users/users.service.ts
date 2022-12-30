@@ -115,6 +115,10 @@ export class UsersService {
     }
   }
 
+  async findByEmail(email: string): Promise<User> {
+    return this.readRepository.findOne({ where: { email } });
+  }
+
   async update(id: string, payload: CreateUserDto): Promise<User> {
     const user = await this.readRepository.findOne({ where: { id } });
     if (!user) {
