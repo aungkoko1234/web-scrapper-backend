@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 @Entity('users')
-export class Admin {
+export class User {
   @PrimaryColumn()
   id: string;
 
@@ -18,6 +18,7 @@ export class Admin {
 
   @Column({
     name: 'email',
+    unique: true,
   })
   email: string;
 
