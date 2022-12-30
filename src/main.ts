@@ -41,7 +41,7 @@ async function bootstrap() {
   );
 
   const options = new DocumentBuilder()
-    .setTitle('Burmese Associated Press')
+    .setTitle('Google Search Scraper')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
