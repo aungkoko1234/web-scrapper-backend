@@ -43,12 +43,23 @@ export class KeywordsService {
     }
   }
 
-  async create(payload: KeyWordDto): Promise<KeyWord> {
+  async create({
+    name,
+    createdBy,
+    adsWordCount,
+    linkCount,
+    searchResultCount,
+    htmlSource,
+  }: KeyWordDto): Promise<KeyWord> {
     try {
       const keyword = new KeyWord();
       keyword.id = nanoid();
-      keyword.name = payload.name;
-      keyword.createdBy = payload.createdBy;
+      keyword.name = name;
+      keyword.createdBy = createdBy;
+      keyword.adsWordCount = adsWordCount;
+      keyword.linkCount = linkCount;
+      keyword.searchResultCount = searchResultCount;
+      keyword.htmlSource = htmlSource;
       return this.writeRepository.save(keyword);
     } catch (error) {
       throw new InternalServerErrorException(error);

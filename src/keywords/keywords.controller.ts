@@ -54,6 +54,7 @@ export class KeywordsController {
     const response = await unirest.get(url).headers(headers);
     const $ = cheerio.load(response.body);
     const ads = [];
+    const links = [];
     $('#tads .uEierd').each((i, el) => {
       ads[i] = {
         title: $(el).find('.v0nnCb span').text(),
@@ -62,13 +63,29 @@ export class KeywordsController {
         link: $(el).find('a.sVXRqc').attr('href'),
       };
     });
-    console.log('ads count', ads);
+    $('a').each((index, el) => {
+      links[index] = {
+        text: $(el).text(),
+        href: $(el).attr('href'),
+      };
+    });
+    const searchResultArray = $('#result-stats').text().split('(');
+    const searchResultCount = parseInt(
+      searchResultArray[0].replace(/[^0-9]/g, ''),
+      10,
+    );
+    // console.log('ads count', ads);
+    // console.log('links', links);
     return getResponseFormat(
       0,
       'Create User',
       await this.keywordsService.create({
         name,
         createdBy: req.user.id,
+        adsWordCount: ads.length,
+        linkCount: links.length,
+        searchResultCount: searchResultCount,
+        htmlSource: $.root().html(),
       }),
     );
   }

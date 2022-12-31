@@ -36,6 +36,7 @@ export class KeyWord {
   @Column({
     name: 'search_result_count',
     default: 0,
+    type: 'bigint',
   })
   searchResultCount: number;
 
