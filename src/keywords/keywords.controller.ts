@@ -5,21 +5,42 @@ import {
   Post,
   Query,
   Request,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import * as unirest from 'unirest';
 import * as cheerio from 'cheerio';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { getResponseFormat } from 'src/shared/utils/misc';
+import * as csvparse from 'csv-parse';
+import {
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import {
+  getResponseFormat,
+  ImageOptions,
+  selectRandomUser,
+} from 'src/shared/utils/misc';
 import { CreateKeywordDto } from './dto/create-keyword.dto';
 import { KeywordQueryDto } from './dto/keyword-query.dto';
 import { KeywordsService } from './keywords.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { HelpersService } from 'src/helpers/helpers.service';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @ApiTags('Keywords')
 @Controller('keywords')
 export class KeywordsController {
-  constructor(private readonly keywordsService: KeywordsService) {}
+  constructor(
+    private readonly keywordsService: KeywordsService,
+    private readonly helpersService: HelpersService,
+    @InjectQueue('keywords')
+    private readonly searchQueue: Queue,
+  ) {}
   @Get()
   @ApiOperation({
     summary: 'Get KeyWord List',
@@ -29,7 +50,7 @@ export class KeywordsController {
   ) {
     return getResponseFormat(
       0,
-      'Get User List',
+      'Get Keyword List',
       await this.keywordsService.getAll(
         { page, limit },
         payload.search,
@@ -46,47 +67,48 @@ export class KeywordsController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   async create(@Body() { name }: CreateKeywordDto, @Request() req) {
-    const headers = {
-      'User-Agent':
-        'Mozilla/5.0 (Windows NT 6.3; Win64; x64)   AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36 Viewer/96.9.4688.89',
-    };
-    const url = `https://www.google.com/search?q=${name}&gl=us&hl=en`;
-    const response = await unirest.get(url).headers(headers);
-    const $ = cheerio.load(response.body);
-    const ads = [];
-    const links = [];
-    $('#tads .uEierd').each((i, el) => {
-      ads[i] = {
-        title: $(el).find('.v0nnCb span').text(),
-        snippet: $(el).find('.lyLwlc').text(),
-        displayed_link: $(el).find('.qzEoUe').text(),
-        link: $(el).find('a.sVXRqc').attr('href'),
-      };
-    });
-    $('a').each((index, el) => {
-      links[index] = {
-        text: $(el).text(),
-        href: $(el).attr('href'),
-      };
-    });
-    const searchResultArray = $('#result-stats').text().split('(');
-    const searchResultCount = parseInt(
-      searchResultArray[0].replace(/[^0-9]/g, ''),
-      10,
-    );
+    // console.log('search Result', searchResultCount);
     // console.log('ads count', ads);
     // console.log('links', links);
-    return getResponseFormat(
-      0,
-      'Create User',
-      await this.keywordsService.create({
-        name,
-        createdBy: req.user.id,
-        adsWordCount: ads.length,
-        linkCount: links.length,
-        searchResultCount: searchResultCount,
-        htmlSource: $.root().html(),
-      }),
-    );
+    await this.searchQueue.add('search-keyword', {
+      createdUserId: req.user.id,
+      keywords: [name],
+    });
+    return getResponseFormat(0, 'Create Keyword', {
+      message: 'Searching Keyword',
+    });
+  }
+
+  @Post('upload-file')
+  @ApiOperation({
+    summary: 'KeyWord CSV File',
+  })
+  @UseGuards(AuthGuard('jwt'))
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('keywords', ImageOptions))
+  async uploadImage(@UploadedFile() file, @Request() req) {
+    // eslint-disable-next-line prefer-const
+    let keywords = [];
+    const path = await this.helpersService.imageUploadToS3(file);
+    const queue = this.searchQueue;
+    await this.helpersService
+      .getStream('web-scrape-nimble', path)
+      .pipe(csvparse.parse({ delimiter: ',', from_line: 2 }))
+      .on('data', function (row) {
+        console.log('logs', row[0]);
+        keywords.push(row[0]);
+      })
+      .on('end', async function () {
+        console.log('keywords', keywords);
+        await queue.add('search-keyword', {
+          keywords,
+          createdUserId: req.user.id,
+        });
+      });
+    return getResponseFormat(0, 'Upload Key Word File', {
+      totalKeyWord: keywords.length,
+      message:
+        'Uploading Keyword Successful.Start searching results for keywords',
+    });
   }
 }
