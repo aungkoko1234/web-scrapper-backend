@@ -10,6 +10,10 @@ export default (): any => ({
     database: process.env.DB_DATABASE,
     port: parseInt(process.env.DB_PORT, 10) || 3306,
   },
+  redis: {
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
+  },
   admin: {
     name: process.env.ADMIN_NAME,
     email: process.env.ADMIN_EMAIL,

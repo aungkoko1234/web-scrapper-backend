@@ -7,6 +7,7 @@ import { DatabaseModule } from './database/database.module';
 import { HelpersModule } from './helpers/helpers.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { KeywordsModule } from './keywords/keywords.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AuthModule } from './auth/auth.module';
     HelpersModule,
     UsersModule,
     AuthModule,
+    KeywordsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
