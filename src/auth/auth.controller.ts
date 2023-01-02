@@ -12,7 +12,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { getResponseFormat } from 'src/shared/utils/misc';
+import { getResponseFormat } from '../shared/utils/misc';
 
 @ApiTags('Auth')
 @Controller('auth')
