@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ParamCodeDto } from 'src/shared/utils/dto/param-code.dto';
-import { getResponseFormat } from 'src/shared/utils/misc';
+import { ParamCodeDto } from '../shared/utils/dto/param-code.dto';
+import { getResponseFormat } from '../shared/utils/misc';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserQueryDto } from './dto/user-query.dto';
 import { UsersService } from './users.service';
