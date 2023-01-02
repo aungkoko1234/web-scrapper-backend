@@ -1,12 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { createMock } from '@golevelup/ts-jest';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { HelpersService } from '../helpers/helpers.service';
-import { KeyWord } from './entity/keyword.entity';
 import { KeywordsController } from './keywords.controller';
 import { KeywordsService } from './keywords.service';
-import { KeyWordsProcessor } from './keywords.processor';
 
 describe('KeywordsController', () => {
   let controller: KeywordsController;
@@ -62,7 +57,7 @@ describe('KeywordsController', () => {
   });
 
   describe('getAllKeyWords', () => {
-    it('should get an array of cats', async () => {
+    it('should get an array of keywords', async () => {
       await expect(
         controller.getUsers({ limit: 10, page: 1 }),
       ).resolves.toEqual({
