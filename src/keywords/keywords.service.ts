@@ -65,4 +65,12 @@ export class KeywordsService {
       throw new InternalServerErrorException(error);
     }
   }
+
+  async findOne(id: string): Promise<KeyWord> {
+    try {
+      return this.readRepository.findOne({ where: { id } });
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
 }

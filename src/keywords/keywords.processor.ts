@@ -6,8 +6,8 @@ import {
   Processor,
 } from '@nestjs/bull';
 import { DoneCallback, Job } from 'bull';
-import { HelpersService } from 'src/helpers/helpers.service';
-import { KeywordProcess } from 'src/shared/types/keyword-process.interface';
+import { HelpersService } from '../helpers/helpers.service';
+import { KeywordProcess } from '../shared/types/keyword-process.interface';
 import { KeywordsService } from './keywords.service';
 @Processor('keywords')
 export class KeyWordsProcessor {
