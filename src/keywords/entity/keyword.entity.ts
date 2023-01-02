@@ -35,10 +35,10 @@ export class KeyWord {
 
   @Column({
     name: 'search_result_count',
-    default: 0,
-    type: 'bigint',
+    default: '0',
+    type: 'varchar',
   })
-  searchResultCount: number;
+  searchResultCount: string;
 
   @Column({
     name: 'html_source',

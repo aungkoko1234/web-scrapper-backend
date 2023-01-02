@@ -67,9 +67,6 @@ export class KeywordsController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   async create(@Body() { name }: CreateKeywordDto, @Request() req) {
-    // console.log('search Result', searchResultCount);
-    // console.log('ads count', ads);
-    // console.log('links', links);
     await this.searchQueue.add('search-keyword', {
       createdUserId: req.user.id,
       keywords: [name],

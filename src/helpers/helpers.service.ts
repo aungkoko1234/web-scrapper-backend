@@ -143,15 +143,12 @@ export class HelpersService {
     const searchResultArray = $('#result-stats').text().split('(');
     const searchResultCount = searchResultArray[0].replace(/[^0-9]/g, '');
     // console.log('search Result', searchResultCount);
-    // console.log('ads count', ads);
-    // console.log('links', links);
+    // console.log('ads count', ads.length);
+    // console.log('links', links.length);
     return {
       adsWordCount: ads.length,
       linkCount: links.length,
-      searchResultCount:
-        typeof searchResultCount === 'number'
-          ? parseInt(searchResultCount, 10)
-          : 0,
+      searchResultCount: searchResultCount,
       htmlSource: $.root().html(),
     };
   }

@@ -6,8 +6,10 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ParamCodeDto } from 'src/shared/utils/dto/param-code.dto';
 import { getResponseFormat } from 'src/shared/utils/misc';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -23,6 +25,8 @@ export class UsersController {
   @ApiOperation({
     summary: 'Get User List',
   })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   async getUsers(@Query() { page = 1, limit = 10, ...payload }: UserQueryDto) {
     return getResponseFormat(
       0,
@@ -37,9 +41,8 @@ export class UsersController {
   }
 
   @Post()
-  @ApiOperation({
-    summary: 'Create User',
-  })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   async create(@Body() payload: CreateUserDto) {
     return getResponseFormat(
       0,
