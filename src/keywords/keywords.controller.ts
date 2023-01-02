@@ -10,8 +10,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import * as unirest from 'unirest';
-import * as cheerio from 'cheerio';
 import * as csvparse from 'csv-parse';
 import {
   ApiBearerAuth,
@@ -19,16 +17,12 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import {
-  getResponseFormat,
-  ImageOptions,
-  selectRandomUser,
-} from 'src/shared/utils/misc';
+import { getResponseFormat, ImageOptions } from '../shared/utils/misc';
 import { CreateKeywordDto } from './dto/create-keyword.dto';
 import { KeywordQueryDto } from './dto/keyword-query.dto';
 import { KeywordsService } from './keywords.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { HelpersService } from 'src/helpers/helpers.service';
+import { HelpersService } from '../helpers/helpers.service';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 
@@ -92,7 +86,6 @@ export class KeywordsController {
       .getStream('web-scrape-nimble', path)
       .pipe(csvparse.parse({ delimiter: ',', from_line: 2 }))
       .on('data', function (row) {
-        console.log('logs', row[0]);
         keywords.push(row[0]);
       })
       .on('end', async function () {

@@ -5,8 +5,8 @@ import { nanoid } from 'nanoid';
 import * as stream from 'stream';
 import * as unirest from 'unirest';
 import * as cheerio from 'cheerio';
-import { selectRandomUser } from 'src/shared/utils/misc';
-import { KeyWordDto } from 'src/keywords/dto/keyword.dto';
+import { selectRandomUser } from '../shared/utils/misc';
+import { KeyWordDto } from '../keywords/dto/keyword.dto';
 
 @Injectable()
 export class HelpersService {
