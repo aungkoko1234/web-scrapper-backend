@@ -3,6 +3,6 @@ export class KeyWordDto {
   createdBy: string;
   adsWordCount?: number;
   linkCount?: number;
-  searchResultCount?: number;
+  searchResultCount?: string;
   htmlSource?: string;
 }
