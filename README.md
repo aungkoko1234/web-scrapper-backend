@@ -19,54 +19,70 @@
     <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
   <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This is the backend api for the Scrapping Google Search Results.This project is built by a progressive Node JS framework call [Nest](https://github.com/nestjs/nest).
+
+## Tech Stack
+
+The techstack for this project are as follow.
+
+1. [Node JS v16](https://nodejs.org/en/blog/release/v16.16.0/)
+2. [Postgres SQL](https://www.postgresql.org/) for storing data
+3. [Redis](https://redis.io/docs/manual/cli/) for caching queue data
+4. Typescript
+5. [Bull](https://github.com/OptimalBits/bull) for web scarping the large amount of keyword by queue
+6. [AWS-SDK](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/) for uploading the csv file for S3
 
 ## Installation
 
+This project used package manager called `yarn`. To install the dependencies required for this project we need to run the following command.
+
 ```bash
-$ npm install
+$ yarn install
 ```
+
+## Data Migration
+
+Unfortunately, the prodject is not set up with database migration.\
+But there is a dump file called `web-scrapper.sql`under `sample-data/` folder and can restore the sample data from it.
+
+## Environment variable
+
+To run the project, the environment variables are need. You can check the environment variables in `.env.sample`
 
 ## Running the app
 
 ```bash
 # development
-$ npm run start
+$ yarn start
 
 # watch mode
-$ npm run start:dev
+$ yarn start:dev
 
 # production mode
-$ npm run start:prod
+$ yarn start:prod
 ```
 
 ## Test
 
+For the testing, [Jest](https://jestjs.io/) is used to write some function and controllers and not perfect for all test cases because of time limit and difficulty in mocking some services.
+
 ```bash
 # unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
+$ yarn run test
 
 # test coverage
-$ npm run test:cov
+$ yarn run test:cov
 ```
 
-## Support
+## Demo
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Demo application is hosted on Digital Ocean which is set up manually and run with [PM2](), not with docker.\
+You can check the `Swagger Api Documentation` at [here](https://scrapper.evolvetechmm.co/v1/docs).\
+The API documentations is set up with HTTP Basic Auth.\
+The user name and password are `nimble` and `n1mbl3_2023!`
 
 ## License
 
