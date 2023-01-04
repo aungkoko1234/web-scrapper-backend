@@ -14,11 +14,6 @@ export default (): any => ({
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT,
   },
-  admin: {
-    name: process.env.ADMIN_NAME,
-    email: process.env.ADMIN_EMAIL,
-    password: process.env.ADMIN_PASSWORD,
-  },
   basicAuth: {
     username: process.env.BASIC_AUTH_USERNAME,
     password: process.env.BASIC_AUTH_PASSWORD,
