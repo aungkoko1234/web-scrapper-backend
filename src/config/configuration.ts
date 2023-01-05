@@ -1,7 +1,7 @@
 export default (): any => ({
   port: parseInt(process.env.PORT, 10) || 3000,
   version: process.env.API_VERSION || 'v1',
-  imageBucket: process.env.IMAGE_BUCKET,
+  fileBucket: process.env.FILE_BUCKET,
   database: {
     readHost: process.env.DB_READ_HOST,
     writeHost: process.env.DB_WRITE_HOST,

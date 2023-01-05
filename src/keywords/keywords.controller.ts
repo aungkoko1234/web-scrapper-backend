@@ -42,7 +42,7 @@ export class KeywordsController {
   @ApiOperation({
     summary: 'Get KeyWord List',
   })
-  async getUsers(
+  async getKeywords(
     @Query() { page = 1, limit = 10, ...payload }: KeywordQueryDto,
   ) {
     return getResponseFormat(
@@ -97,7 +97,7 @@ export class KeywordsController {
   async uploadImage(@UploadedFile() file, @Request() req) {
     // eslint-disable-next-line prefer-const
     let keywords = [];
-    const path = await this.helpersService.imageUploadToS3(file);
+    const path = await this.helpersService.csvFileUploadToS3(file);
     const queue = this.searchQueue;
     await this.helpersService
       .getStream('web-scrape-nimble', path)
