@@ -8,6 +8,7 @@ import { HelpersModule } from './helpers/helpers.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { KeywordsModule } from './keywords/keywords.module';
+import { ScraperModule } from './scraper/scraper.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { KeywordsModule } from './keywords/keywords.module';
     UsersModule,
     AuthModule,
     KeywordsModule,
+    ScraperModule,
   ],
   controllers: [AppController],
   providers: [AppService],
