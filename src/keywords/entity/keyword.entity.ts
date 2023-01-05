@@ -1,3 +1,4 @@
+import { KeywordStatus } from 'src/shared/utils/constant';
 import {
   Column,
   CreateDateColumn,
@@ -39,6 +40,14 @@ export class KeyWord {
     type: 'varchar',
   })
   searchResultCount: string;
+
+  @Column({
+    name: 'status',
+    type: 'enum',
+    enum: KeywordStatus,
+    default: KeywordStatus.Initialized,
+  })
+  status: KeywordStatus;
 
   @Column({
     name: 'html_source',
