@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Query,
   Request,
@@ -25,6 +26,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { HelpersService } from '../helpers/helpers.service';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { ParamCodeDto } from 'src/shared/utils/dto/param-code.dto';
+import { KeyWordDto } from './dto/keyword.dto';
 
 @ApiTags('Keywords')
 @Controller('keywords')
@@ -51,6 +54,20 @@ export class KeywordsController {
         payload.orderBy,
         payload.order === 'asc' ? 'ASC' : 'DESC',
       ),
+    );
+  }
+
+  @Get(':id')
+  @ApiOperation({
+    summary: 'Create Keyword',
+  })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  async getDetail(@Param() { id }: ParamCodeDto) {
+    return getResponseFormat(
+      0,
+      'Get Keyword Detail',
+      await this.keywordsService.findOne(id),
     );
   }
 
@@ -85,18 +102,21 @@ export class KeywordsController {
     await this.helpersService
       .getStream('web-scrape-nimble', path)
       .pipe(csvparse.parse({ delimiter: ',', from_line: 2 }))
-      .on('data', function (row) {
+      .on('data', async function (row) {
         keywords.push(row[0]);
       })
       .on('end', async function () {
-        console.log('keywords', keywords);
-        await queue.add('search-keyword', {
-          keywords,
-          createdUserId: req.user.id,
-        });
+        await Promise.all(
+          keywords.map(
+            async (keyword) =>
+              await queue.add('search-keyword', {
+                keyword,
+                createdUserId: req.user.id,
+              }),
+          ),
+        );
       });
     return getResponseFormat(0, 'Upload Key Word File', {
-      totalKeyWord: keywords.length,
       message:
         'Uploading Keyword Successful.Start searching results for keywords',
     });
