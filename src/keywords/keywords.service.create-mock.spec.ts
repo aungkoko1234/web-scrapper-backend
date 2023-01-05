@@ -1,6 +1,7 @@
 import { createMock } from '@golevelup/ts-jest';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { KeywordStatus } from 'src/shared/utils/constant';
 import { Repository } from 'typeorm';
 import { KeyWord } from './entity/keyword.entity';
 import { KeywordsService } from './keywords.service';
@@ -67,6 +68,7 @@ describe('KeywordsService using createMock without DI', () => {
       htmlSource: '',
       linkCount: 70,
       name: 'Job',
+      status: KeywordStatus.Completed,
       searchResultCount: '2300000',
       created: new Date(),
       updated: new Date(),
