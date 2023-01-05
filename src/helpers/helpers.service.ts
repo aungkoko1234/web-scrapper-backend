@@ -8,14 +8,14 @@ import * as stream from 'stream';
 export class HelpersService {
   constructor(private readonly configService: ConfigService) {}
 
-  async imageUploadToS3(file: Express.Multer.File): Promise<string> {
+  async csvFileUploadToS3(file: Express.Multer.File): Promise<string> {
     if (!file) {
       throw new BadRequestException('Invalid file');
     }
 
     try {
       const s3 = new S3(this.configService.get('aws'));
-      const bucket = this.configService.get<string>('imageBucket');
+      const bucket = this.configService.get<string>('fileBucket');
 
       const { Location } = await s3
         .upload({
