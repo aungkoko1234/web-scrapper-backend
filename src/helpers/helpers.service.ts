@@ -36,67 +36,6 @@ export class HelpersService {
     }
   }
 
-  async imageDeleteFromS3(path: string): Promise<void> {
-    try {
-      const s3 = new S3(this.configService.get('aws'));
-      const bucket = this.configService.get<string>('imageBucket');
-
-      if (path.split('/')[3])
-        await s3
-          .deleteObject({
-            Bucket: bucket,
-            Key: path.split('/')[3],
-          })
-          .promise();
-    } catch (err) {
-      throw new Error(err);
-    }
-  }
-
-  async imageDownloadFromS3(path): Promise<S3.GetObjectOutput> {
-    const s3 = new S3(this.configService.get('aws'));
-    const bucket = this.configService.get<string>('imageBucket');
-    try {
-      const result = await s3
-        .getObject({
-          Bucket: bucket,
-          Key: path.split('/')[3],
-        })
-        .promise();
-      return result;
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  async teamImageUploadToS3(
-    file: Express.Multer.File,
-    tournamentName: string,
-    teamName: string,
-  ): Promise<string> {
-    if (!file) {
-      throw new BadRequestException('Invalid file');
-    }
-
-    try {
-      const s3 = new S3(this.configService.get('aws'));
-      const bucket = this.configService.get<string>('imageBucket');
-
-      const { Location } = await s3
-        .upload({
-          Bucket: bucket,
-          Key: tournamentName + '/' + teamName + '.' + file.mimetype,
-          Body: file.buffer,
-          ContentType: file.mimetype,
-        })
-        .promise();
-
-      return Location;
-    } catch (err) {
-      throw new Error(err);
-    }
-  }
-
   getStream(bucket: string, key: string) {
     const s3 = new S3(this.configService.get('aws'));
     let streamCreated = false;
