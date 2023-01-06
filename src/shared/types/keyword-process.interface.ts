@@ -1,4 +1,4 @@
 export interface KeywordProcess {
-  createdUserId: string;
-  keyword: string;
+  name: string;
+  id: string;
 }

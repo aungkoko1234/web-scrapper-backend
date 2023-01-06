@@ -11,7 +11,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import * as csvparse from 'csv-parse';
 import {
   ApiBearerAuth,
   ApiConsumes,
@@ -23,18 +22,16 @@ import { CreateKeywordDto } from './dto/create-keyword.dto';
 import { KeywordQueryDto } from './dto/keyword-query.dto';
 import { KeywordsService } from './keywords.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { HelpersService } from '../helpers/helpers.service';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { ParamCodeDto } from 'src/shared/utils/dto/param-code.dto';
-import { KeyWordDto } from './dto/keyword.dto';
+import { KeywordProcess } from 'src/shared/types/keyword-process.interface';
 
 @ApiTags('Keywords')
 @Controller('keywords')
 export class KeywordsController {
   constructor(
     private readonly keywordsService: KeywordsService,
-    private readonly helpersService: HelpersService,
     @InjectQueue('keywords')
     private readonly searchQueue: Queue,
   ) {}
@@ -95,28 +92,34 @@ export class KeywordsController {
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('keywords', ImageOptions))
   async uploadImage(@UploadedFile() file, @Request() req) {
-    // eslint-disable-next-line prefer-const
-    let keywords = [];
-    const path = await this.helpersService.csvFileUploadToS3(file);
     const queue = this.searchQueue;
-    await this.helpersService
-      .getStream('web-scrape-nimble', path)
-      .pipe(csvparse.parse({ delimiter: ',', from_line: 2 }))
-      .on('data', async function (row) {
-        keywords.push(row[0]);
-      })
-      .on('end', async function () {
-        await Promise.all(
-          keywords.map(
-            async (keyword) =>
-              await queue.add('search-keyword', {
-                keyword,
-                createdUserId: req.user.id,
-              }),
-          ),
-        );
-      });
+    //parsing the csv data to array
+    const data = file.buffer
+      .toString()
+      .split('\n')
+      .map((e) => e.trim())
+      .map((e) => e.split(',')[0]);
+    const keywords: KeywordProcess[] = [];
+    await Promise.all(
+      data.map(async (item) => {
+        const { name, id } = await this.keywordsService.create({
+          name: item,
+          createdBy: req.user.id,
+        });
+        keywords.push({ name, id });
+      }),
+    );
+    await Promise.all(
+      keywords.map(
+        async ({ name, id }) =>
+          await queue.add('search-keyword', {
+            name,
+            id,
+          }),
+      ),
+    );
     return getResponseFormat(0, 'Upload Key Word File', {
+      keywords: keywords,
       message:
         'Uploading Keyword Successful.Start searching results for keywords',
     });

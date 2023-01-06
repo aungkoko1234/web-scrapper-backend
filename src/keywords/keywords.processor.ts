@@ -23,24 +23,17 @@ export class KeyWordsProcessor {
     callback: DoneCallback,
   ) {
     console.log('Queue is started', job.data);
-    const { keyword, createdUserId } = job.data;
-    const created = await this.keywordsService.create({
-      name: keyword,
-      createdBy: createdUserId,
-    });
+    const { name, id } = job.data;
     try {
-      const searchData = await this.scraperService.searchKeyWordResult(keyword);
-      await this.keywordsService.update(created.id, {
+      const searchData = await this.scraperService.searchKeyWordResult(name);
+      await this.keywordsService.update(id, {
         status: KeywordStatus.Completed,
         ...searchData,
       });
       callback(null, `KeyWord Searching is started at ${new Date().getTime()}`);
     } catch (error) {
       console.log('err', error);
-      await this.keywordsService.updateStatus(
-        created.id,
-        KeywordStatus.Errored,
-      );
+      await this.keywordsService.updateStatus(id, KeywordStatus.Errored);
       callback(error, null);
     }
   }
