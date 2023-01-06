@@ -1,7 +1,6 @@
 export default (): any => ({
   port: parseInt(process.env.PORT, 10) || 3000,
   version: process.env.API_VERSION || 'v1',
-  fileBucket: process.env.FILE_BUCKET,
   database: {
     readHost: process.env.DB_READ_HOST,
     writeHost: process.env.DB_WRITE_HOST,
@@ -17,11 +16,6 @@ export default (): any => ({
   basicAuth: {
     username: process.env.BASIC_AUTH_USERNAME,
     password: process.env.BASIC_AUTH_PASSWORD,
-  },
-  aws: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    region: process.env.AWS_REGION,
   },
   jwt: {
     secret: process.env.JWT_SECRET,
