@@ -33,7 +33,6 @@ The techstack for this project are as follow.
 3. [Redis](https://redis.io/docs/manual/cli/) for caching queue data
 4. Typescript
 5. [Bull](https://github.com/OptimalBits/bull) for web scarping the large amount of keyword by queue
-6. [AWS-SDK](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/) for uploading the csv file for S3
 
 ## Installation
 
